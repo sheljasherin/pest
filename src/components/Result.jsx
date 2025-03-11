@@ -1,62 +1,76 @@
-import { FaExclamationCircle, FaCheckCircle } from 'react-icons/fa'; // Import the icons for red and green symbols
+import { useEffect, useState } from "react";
+import { db, collection, getDocs } from "./firebase";
 
-function Result() {
-  const insects = [
-    { name: "Brownplant hopper", count: 17 },
-    { name: "ladybug", count: 8 },
-    { name: "grasshopper", count: 20 },
-    { name: "caterpillar", count: 10 },
-  ];
+const Result = () => {
+  const [insectData, setInsectData] = useState([]);
+
+  useEffect(() => {
+    const fetchInsectData = async () => {
+      try {
+        const querySnapshot = await getDocs(collection(db, "insect_detections"));
+        let results = [];
+        querySnapshot.forEach((doc) => {
+          results.push({ id: doc.id, ...doc.data() });
+        });
+        setInsectData(results);
+      } catch (error) {
+        console.error("Error fetching insect data:", error);
+      }
+    };
+
+    fetchInsectData();
+  }, []);
 
   return (
-    <div className="max-w-screen-lg mx-auto mt-5 p-5">
-      <table className="table-auto w-full border mt-20 border-gray-300">
-        <thead>
-          <tr>
-            <th className="border border-gray-300 p-2">Insect Name</th>
-            <th className="border border-gray-300 p-2">Count</th>
-            <th className="border border-gray-300 p-2">Status</th>
-          </tr>
-        </thead>
-        <tbody>
-          {insects.map((insect, index) => (
-            <tr key={index}>
-              <td className="border border-gray-300 p-2">{insect.name}</td>
-              <td className="border border-gray-300 p-2">{insect.count}</td>
-              <td className="border border-gray-300 p-2">
-                {insect.count > 15 ? (
-                  <div className="flex items-center text-red-600">
-                    <FaExclamationCircle className="mr-2" /> Harmful
-                  </div>
-                ) : (
-                  <div className="flex items-center text-green-600">
-                    <FaCheckCircle className="mr-2" /> Not Harmful
-                  </div>
-                )}
-              </td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
+    <div className="flex justify-center items-center min-h-screen bg-gray-100">
+      
+        {insectData.length === 0 ? (
+          <p className="text-center text-gray-600">No data found.</p>
+        ) : (
+          <div className="space-y-6">
+            {insectData.map((item) => (
+              <div key={item.id} className="border border-gray-300 rounded-lg p-4 shadow-md bg-gray-50">
+                <h3 className="text-xl font-semibold mb-3 text-center text-gray-700">Total Insects Detected: {item.total_insects}</h3>
+                
+                {/* Harmful Insects Container */}
+                <div className="mb-4 p-4 border-l-4 border-red-600 bg-red-100 rounded-lg">
+                  <h4 className="font-bold text-red-600"> Harmful Insects ({item.harmful_count}):</h4>
+                  <ul className="list-disc list-inside text-red-500">
+                    {item.harmful_insects.map((insect, index) => (
+                      <li key={index}>{insect}</li>
+                    ))}
+                  </ul>
+                  <p className="text-xs text-red-600 mt-2">
+                    Precaution: Avoid direct contact, use protective gear, and consider safe pesticide solutions.
+                  </p>
+                </div>
 
-      {/* Additional section for harmful insects */}
-      <div className="mt-10 p-5 border-t border-gray-300">
-        <h3 className="text-xl font-semibold mb-4">Important Notice:</h3>
-        <p>
-          If harmful insects are detected (such as those with a count higher than 15), it is crucial to take
-          immediate action. These insects can damage crops significantly.
-        </p>
-        <p className="mt-2">
-          It is recommended to use pesticides carefully. Before using any pesticide, make sure to follow
-          the instructions on the label, including the quantity to use, safety precautions, and environmental
-          considerations.
-        </p>
-        <p className="mt-2 text-red-600">
-          Always wear protective gear and ensure that the pesticide is safe for the environment before applying it.
-        </p>
+                {/* Non-Harmful Insects Container */}
+                <div className="mb-4 p-4 border-l-4 border-green-600 bg-green-100 rounded-lg">
+                  <h4 className="font-bold text-green-600"> Non-Harmful Insects ({item.non_harmful_count}):</h4>
+                  <ul className="list-disc list-inside text-green-500">
+                    {item.non_harmful_insects.map((insect, index) => (
+                      <li key={index}>{insect}</li>
+                    ))}
+                  </ul>
+                </div>
+
+                {/* Insect Count Container */}
+                <div className="p-4 border-l-4 border-gray-600 bg-gray-200 rounded-lg">
+                  <h4 className="font-bold text-gray-700">Insect Count:</h4>
+                  <ul className="list-disc list-inside text-gray-800">
+                    {Object.entries(item.insect_count).map(([insect, count]) => (
+                      <li key={insect}>{insect}: {count}</li>
+                    ))}
+                  </ul>
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
       </div>
-    </div>
+   
   );
-}
+};
 
 export default Result;
