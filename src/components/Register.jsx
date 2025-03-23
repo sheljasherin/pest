@@ -1,8 +1,7 @@
 import { useState } from "react";
 import { FaTimes } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
-import registerImage from "../assets/register.jpg"; // Ensure the image path is correct
-
+import registerImage from "../assets/register.jpg"; 
 function Register() {
   const [isFormVisible, setIsFormVisible] = useState(true);
   const [name, setName] = useState("");
