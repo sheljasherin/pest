@@ -1,9 +1,9 @@
-import { Link } from 'react-router-dom';
+import { Link } from "react-router-dom";
 
 function Navbar() {
   return (
     <>
-      <div className="max-w-screen-2xl container mx-auto md:px-20 px-4 fixed top-0 right-0 left-0">
+      <div className="max-w-screen-2xl container mx-auto md:px-20 px-4 fixed top-0 right-0 left-0 bg-white shadow-md z-50">
         <div className="navbar">
           <div className="navbar-start">
             <div className="dropdown">
@@ -23,10 +23,10 @@ function Navbar() {
                 className="menu menu-sm dropdown-content bg-base-100 rounded-box z-[1] mt-3 w-52 p-2 shadow"
               >
                 <li><Link to="/">Home</Link></li>
-                <li><Link to="/About">About Us</Link></li>
+                <li><Link to="/about">About Us</Link></li>
                 <li><Link to="/result">Result</Link></li>
-                <li><Link to="/Contact">Contact Us</Link></li>
-                <li><Link to="/News">News</Link></li>
+                <li><Link to="/contact">Contact Us</Link></li>
+                <li><Link to="/news">News</Link></li>
               </ul>
             </div>
 
@@ -38,10 +38,10 @@ function Navbar() {
           <div className="navbar-center hidden lg:flex">
             <ul className="menu menu-horizontal px-1 font-bold text-xl">
               <li><Link to="/">Home</Link></li>
-              <li><Link to="/About">About Us</Link></li>
+              <li><Link to="/about">About Us</Link></li>
               <li><Link to="/result">Result</Link></li>
-              <li><Link to="/Contact">Contact Us</Link></li>
-              <li><Link to="/News">News</Link></li>
+              <li><Link to="/contact">Contact Us</Link></li>
+              <li><Link to="/news">News</Link></li>
             </ul>
           </div>
 
