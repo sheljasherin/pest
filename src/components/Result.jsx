@@ -1,14 +1,6 @@
+import { FaExclamationCircle, FaCheckCircle } from 'react-icons/fa';
 import { useEffect, useState } from "react";
 import { db, collection, getDocs } from "./firebase";
-
-const fertilizerSuggestions = {
-  "Aphid": "Use neem oil or insecticidal soap.",
-  "Locust": "Apply biological pesticides like Metarhizium.",
-  "Weevil": "Use diatomaceous earth or pyrethrin-based sprays.",
-  "Caterpillar": "Introduce natural predators like ladybugs or use Bacillus thuringiensis (Bt).",
-  "Grasshopper": "Use row covers or apply garlic spray.",
-  "Moth": "Use pheromone traps and natural repellents like basil plants."
-};
 
 const Result = () => {
   const [insectData, setInsectData] = useState([]);
@@ -17,10 +9,7 @@ const Result = () => {
     const fetchInsectData = async () => {
       try {
         const querySnapshot = await getDocs(collection(db, "insect_detections"));
-        let results = [];
-        querySnapshot.forEach((doc) => {
-          results.push({ id: doc.id, ...doc.data() });
-        });
+        const results = querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
         setInsectData(results);
       } catch (error) {
         console.error("Error fetching insect data:", error);
@@ -31,53 +20,46 @@ const Result = () => {
   }, []);
 
   return (
-    <div className="flex flex-col items-center bg-gray-100 py-6 mt-20">
+    <div className="max-w-screen-lg mx-auto mt-5 p-5">
       {insectData.length === 0 ? (
         <p className="text-center text-gray-600">No data found.</p>
       ) : (
-        <div className="w-full max-w-3xl bg-white p-6 rounded-lg shadow-md">
+        <div className="space-y-6">
           {insectData.map((item) => (
-            <div key={item.id} className="mb-6">
-              <h2 className="text-2xl font-semibold text-gray-800 mb-2">Total Insects: {item.total_insects}</h2>
+            <div key={item.id} className="border border-gray-300 rounded-lg p-4 shadow-md bg-gray-50">
+              <h3 className="text-xl font-semibold text-center text-gray-700">
+                Total Insects Detected: {item.total_insects}
+              </h3>
 
               {/* Harmful Insects */}
-              <div className="mb-4">
-                <h3 className="text-xl font-semibold text-red-600">Harmful Insects ({item.harmful_count})</h3>
-                <ul className="list-disc pl-6 text-red-500">
-                  {item.harmful_insects.map((insect) => (
-                    <li key={insect}>{insect}</li>
+              <div className="p-4 border-l-4 border-red-600 bg-red-100 rounded-lg">
+                <h4 className="font-bold text-red-600">Harmful Insects ({item.harmful_count}):</h4>
+                <ul className="list-disc list-inside text-red-500">
+                  {item.harmful_insects.map((insect, index) => (
+                    <li key={index}>{insect}</li>
                   ))}
                 </ul>
+                <p className="text-xs text-red-600 mt-2">
+                  Precaution: Use protective gear and consider safe pesticide solutions.
+                </p>
               </div>
 
               {/* Non-Harmful Insects */}
-              <div className="mb-4">
-                <h3 className="text-xl font-semibold text-green-600">Non-Harmful Insects ({item.non_harmful_count})</h3>
-                <ul className="list-disc pl-6 text-green-500">
-                  {item.non_harmful_insects.map((insect) => (
-                    <li key={insect}>{insect}</li>
+              <div className="p-4 border-l-4 border-green-600 bg-green-100 rounded-lg">
+                <h4 className="font-bold text-green-600">Non-Harmful Insects ({item.non_harmful_count}):</h4>
+                <ul className="list-disc list-inside text-green-500">
+                  {item.non_harmful_insects.map((insect, index) => (
+                    <li key={index}>{insect}</li>
                   ))}
                 </ul>
               </div>
 
               {/* Insect Count */}
-              <div className="mb-4">
-                <h3 className="text-xl font-semibold text-gray-700">Insect Count</h3>
-                <ul className="list-disc pl-6 text-gray-600">
+              <div className="p-4 border-l-4 border-gray-600 bg-gray-200 rounded-lg">
+                <h4 className="font-bold text-gray-700">Insect Count:</h4>
+                <ul className="list-disc list-inside text-gray-800">
                   {Object.entries(item.insect_count).map(([insect, count]) => (
                     <li key={insect}>{insect}: {count}</li>
-                  ))}
-                </ul>
-              </div>
-
-              {/* Fertilizer & Tips */}
-              <div className="mb-4">
-                <h3 className="text-xl font-semibold text-blue-700">Tips & Fertilizer Suggestions</h3>
-                <ul className="list-disc pl-6 text-blue-500">
-                  {item.harmful_insects.map((insect) => (
-                    <li key={insect}>
-                      <strong>{insect}:</strong> {fertilizerSuggestions[insect] || "Use general pest control methods."}
-                    </li>
                   ))}
                 </ul>
               </div>

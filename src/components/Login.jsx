@@ -26,9 +26,9 @@ function Login() {
       if (!res.ok) {
         alert(data.message);
       } else {
-        // Save token to localStorage (or use context/state management)
+     
         localStorage.setItem("token", data.token);
-        navigate("/dashboard"); // redirect to a protected page
+        navigate("/Result"); 
       }
     } catch (err) {
       console.error(err);

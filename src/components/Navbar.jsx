@@ -1,6 +1,14 @@
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 function Navbar() {
+  const navigate = useNavigate();
+  const isAuthenticated = localStorage.getItem("token");
+
+  const handleLogout = () => {
+    localStorage.removeItem("token"); // Remove the token
+    navigate("/login"); // Redirect to login page
+  };
+
   return (
     <>
       <div className="max-w-screen-2xl container mx-auto md:px-20 px-4 fixed top-0 right-0 left-0 bg-white shadow-md z-50">
@@ -46,8 +54,16 @@ function Navbar() {
           </div>
 
           <div className="navbar-end space-x-2">
-            <Link to="/register" className="btn h-50 w-50 p-2 rounded hover:bg-green text-lg">Register</Link>
-            <Link to="/login" className="btn p-2 rounded hover:bg-green text-lg">Login</Link>
+            {isAuthenticated ? (
+              <button onClick={handleLogout} className="btn p-2 rounded bg-red-500 text-white text-lg">
+                Logout
+              </button>
+            ) : (
+              <>
+                <Link to="/register" className="btn h-50 w-50 p-2 rounded hover:bg-green text-lg">Register</Link>
+                <Link to="/login" className="btn p-2 rounded hover:bg-green text-lg">Login</Link>
+              </>
+            )}
           </div>
         </div>
       </div>
